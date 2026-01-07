@@ -50,18 +50,30 @@ connectDB();
 
 // POST endpoint - receive sensor data
 app.post('/api/sensor-data', async (req, res) => {
-  const { roomId, buildingId, floor, temperature, humidity, wifiDevices, occupancy, timestamp, sensorStatus } = req.body;
+  // ===== UPDATED: Extract new fields =====
+  const { 
+    roomId, buildingId, floor, 
+    temperature, humidity, 
+    wifiDevices, occupancy, 
+    co2, mq135Raw,           // NEW
+    pm25, pm10, pm1,         // NEW
+    timestamp, sensorStatus 
+  } = req.body;
   
   console.log(`📡 Data from Room ${roomId}:`, req.body);
   
-  // Store in RAM for real-time dashboard
+  // ===== UPDATED: Store in RAM with new fields =====
   sensorData[roomId] = { 
-    roomId, buildingId, floor, temperature, humidity, 
-    wifiDevices, occupancy, timestamp, sensorStatus, 
+    roomId, buildingId, floor, 
+    temperature, humidity, 
+    wifiDevices, occupancy,
+    co2, mq135Raw,           // NEW
+    pm25, pm10, pm1,         // NEW
+    timestamp, sensorStatus, 
     lastUpdate: new Date().toISOString() 
   };
   
-  // Store in MongoDB TIME-SERIES collection
+  // ===== UPDATED: Store in MongoDB with new fields =====
   try {
     await collection.insertOne({
       timestamp: new Date(),
@@ -74,6 +86,11 @@ app.post('/api/sensor-data', async (req, res) => {
       humidity,
       wifiDevices,
       occupancy,
+      co2,              // NEW
+      mq135Raw,         // NEW
+      pm25,             // NEW
+      pm10,             // NEW
+      pm1,              // NEW
       sensorStatus
     });
     console.log('✅ Saved to MongoDB');
@@ -136,6 +153,9 @@ app.get('/api/stats/:roomId', async (req, res) => {
         avgHumidity: { $avg: '$humidity' },
         avgOccupancy: { $avg: '$occupancy' },
         maxOccupancy: { $max: '$occupancy' },
+        avgCO2: { $avg: '$co2' },              // NEW
+        avgPM25: { $avg: '$pm25' },            // NEW
+        maxPM25: { $max: '$pm25' },            // NEW
         totalReadings: { $sum: 1 }
       }}
     ]).toArray();
