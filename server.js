@@ -10,7 +10,7 @@ app.use(express.json());
 let sensorData = {};
 
 // MongoDB Configuration
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://sunnys_db_user:JWCt1SLHADdfJTGL@digital-twin.gq1elir.mongodb.net/?retryWrites=true&w=majority&appName=digital-twin';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://sunnys_db_user:y8eE3IP0l6wL8UHQ@digital-twin.gq1elir.mongodb.net/?retryWrites=true&w=majority&appName=digital-twin';
 const DB_NAME = 'csii-iot';
 const COLLECTION_NAME = 'sensor-readings';
 
